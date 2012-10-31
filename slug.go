@@ -21,9 +21,6 @@ func Slug(s string) string {
 	dash := false
 	for _, r := range norm.NFKD.String(s) {
 		switch {
-		//case r >= 'A' && r <= 'Z':
-		//	r -= 'A'
-		//	fallthrough
 		// unicode 'letters' like mandarin characters pass through
 		case unicode.IsLetter(r):
 			r = unicode.ToLower(r)
