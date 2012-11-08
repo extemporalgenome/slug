@@ -35,7 +35,7 @@ func Slug(s string) string {
 			dash = false
 		}
 	}
-	if i := len(buf) - 1; buf[i] == '-' {
+	if i := len(buf) - 1; i >= 0 && buf[i] == '-' {
 		buf = buf[:i]
 	}
 	return string(buf)
