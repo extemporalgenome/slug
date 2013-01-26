@@ -40,3 +40,19 @@ func Slug(s string) string {
 	}
 	return string(buf)
 }
+
+func IsSlugAscii(s string) bool {
+	dash := true
+	for _, r := range s {
+		switch {
+		case r == '-':
+			if dash {
+				return false
+			}
+			dash = true
+		case 'a' <= r && r <= 'z', '0' <= r && r <= '9':
+			dash = false
+		}
+	}
+	return !dash
+}
