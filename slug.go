@@ -2,8 +2,7 @@
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
 
-// Package slug transforms strings into a normalized
-// form well suited for use in URLs.
+// Package slug transforms strings into a normalized form well suited for use in URLs.
 package slug
 
 import (
@@ -18,7 +17,9 @@ var nop = []*unicode.RangeTable{unicode.Mark, unicode.Sk, unicode.Lm}
 
 // Slug replaces each run of characters which are not unicode letters or
 // numbers with a single hyphen, except for leading or trailing runs. Letters
-// will be stripped of diacritical marks and lowercased.
+// will be stripped of diacritical marks and lowercased. Letter or number
+// codepoints that do not have combining marks or a lower-cased variant will
+// be passed through unaltered.
 func Slug(s string) string {
 	buf := make([]rune, 0, len(s))
 	dash := false
@@ -41,9 +42,10 @@ func Slug(s string) string {
 	return string(buf)
 }
 
-// SlugAscii replaces each run of characters which are not unicode letters or
-// numbers with a single hyphen, except for leading or trailing runs. Letters
-// will be stripped of diacritical marks and lowercased.
+// SlugAscii is identical to Slug, except that if a transformed unicode letter
+// or number still falls outside the ASCII range, it will be hex encoded and
+// delimited by hyphens. As with Slug, in no case will hyphens appear at either
+// end of the returned string.
 func SlugAscii(s string) string {
 	const m = utf8.UTFMax
 	var (
@@ -88,6 +90,7 @@ func SlugAscii(s string) string {
 	return string(buf)
 }
 
+// IsSlugAscii returns true only if SlugAscii(s) == s.
 func IsSlugAscii(s string) bool {
 	dash := true
 	for _, r := range s {
