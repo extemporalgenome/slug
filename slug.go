@@ -11,6 +11,7 @@ import (
 	"unicode"
 )
 
+var lat = []*unicode.RangeTable{unicode.Letter, unicode.Number}
 var nop = []*unicode.RangeTable{unicode.Mark, unicode.Sk, unicode.Lm}
 
 // Slug replaces each run of characters which are not unicode letters or
@@ -22,10 +23,7 @@ func Slug(s string) string {
 	for _, r := range norm.NFKD.String(s) {
 		switch {
 		// unicode 'letters' like mandarin characters pass through
-		case unicode.IsLetter(r):
-			r = unicode.ToLower(r)
-			fallthrough
-		case unicode.IsNumber(r):
+		case unicode.IsOneOf(lat, r):
 			buf = append(buf, unicode.ToLower(r))
 			dash = true
 		case unicode.IsOneOf(nop, r):
