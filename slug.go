@@ -7,7 +7,7 @@
 package slug
 
 import (
-	"exp/norm"
+	"code.google.com/p/go.text/unicode/norm"
 	"unicode"
 )
 
