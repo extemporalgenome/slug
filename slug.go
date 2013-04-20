@@ -8,7 +8,9 @@ package slug
 
 import (
 	"code.google.com/p/go.text/unicode/norm"
+	"encoding/hex"
 	"unicode"
+	"unicode/utf8"
 )
 
 var lat = []*unicode.RangeTable{unicode.Letter, unicode.Number}
@@ -31,6 +33,53 @@ func Slug(s string) string {
 		case dash:
 			buf = append(buf, '-')
 			dash = false
+		}
+	}
+	if i := len(buf) - 1; i >= 0 && buf[i] == '-' {
+		buf = buf[:i]
+	}
+	return string(buf)
+}
+
+// SlugAscii replaces each run of characters which are not unicode letters or
+// numbers with a single hyphen, except for leading or trailing runs. Letters
+// will be stripped of diacritical marks and lowercased.
+func SlugAscii(s string) string {
+	const m = utf8.UTFMax
+	var (
+		ib    [m * 3]byte
+		ob    []byte
+		buf   = make([]byte, 0, len(s))
+		dash  = false
+		latin = true
+	)
+	for _, r := range norm.NFKD.String(s) {
+		switch {
+		case unicode.IsOneOf(lat, r):
+			r = unicode.ToLower(r)
+			n := utf8.EncodeRune(ib[:m], r)
+			if r >= 128 {
+				if latin && dash {
+					buf = append(buf, '-')
+				}
+				n = hex.Encode(ib[m:], ib[:n])
+				ob = ib[m : m+n]
+				latin = false
+			} else {
+				if !latin {
+					buf = append(buf, '-')
+				}
+				ob = ib[:n]
+				latin = true
+			}
+			dash = true
+			buf = append(buf, ob...)
+		case unicode.IsOneOf(nop, r):
+			// skip
+		case dash:
+			buf = append(buf, '-')
+			dash = false
+			latin = true
 		}
 	}
 	if i := len(buf) - 1; i >= 0 && buf[i] == '-' {
