@@ -16,6 +16,7 @@ func TestIsSlugAscii(t *testing.T) {
 		{"a-0", true},
 		{"aa", true},
 		{"a--0", false},
+		{"abc世界def", false},
 	}
 
 	for _, test := range tests {

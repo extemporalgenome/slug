@@ -99,6 +99,8 @@ func IsSlugAscii(s string) bool {
 			dash = true
 		case 'a' <= r && r <= 'z', '0' <= r && r <= '9':
 			dash = false
+		default:
+			return false
 		}
 	}
 	return !dash
