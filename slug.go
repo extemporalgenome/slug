@@ -42,10 +42,10 @@ func Slug(s string) string {
 	return string(buf)
 }
 
-// SlugAscii is identical to Slug, except that if a transformed unicode letter
-// or number still falls outside the ASCII range, it will be hex encoded and
-// delimited by hyphens. As with Slug, in no case will hyphens appear at either
-// end of the returned string.
+// SlugAscii is identical to Slug, except that runs of one or more unicode
+// letters or numbers that still fall outside the ASCII range will have their
+// UTF-8 representation hex encoded and delimited by hyphens. As with Slug, in
+// no case will hyphens appear at either end of the returned string.
 func SlugAscii(s string) string {
 	const m = utf8.UTFMax
 	var (
